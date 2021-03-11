@@ -45,6 +45,11 @@ var speed = 160;
 var speedICE = 220;
 var speedSNOW = 100;
 
+//  Compteur //
+var jump1 = 0;
+var jump2 = 0;
+var dashAttack = 0;
+
 //  Input Events  //
 var cursors;
 var keyA;
@@ -72,7 +77,6 @@ function preload ()
 
 function create ()
 {
-
     //  A simple background for our game
     this.add.image(400, 300, 'sky');
 
@@ -96,6 +100,7 @@ function create ()
     // The player and its settings
     player = this.physics.add.sprite(100, 450, 'dude');
     player.setCollideWorldBounds(true);
+
 
     //Wolf
     wolf = this.physics.add.sprite(500, 500, 'wolf');
@@ -128,6 +133,11 @@ function create ()
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     ////// end Input //////
 
+
+    //Camera//////////////////////////////////////
+    this.cameras.main.startFollow(player);
+
+
     // Collide the player with the platforms Green
     this.physics.add.collider(player, platforms,GroundGreen);
 
@@ -144,6 +154,7 @@ function create ()
 
 //////////////////////////////////////////////////////// FUNCTION-UPDATE ////////////////////////////////////////////////////////
 
+
 function update ()
 {
     if (gameOver)
@@ -153,45 +164,8 @@ function update ()
 
     // Ennemi patern
     // wolf.setVelocityX(-160);
-    
-    //////////////////////////////////////////////////////////  Control manette //////////////////////////////////////////////////////////
 
-    this.input.gamepad.once('connected',function(pad)
-    {
-        paddleConnected = true ;
-        paddle = pad ;
-    });
-
-    if (paddleConnected == true)
-        {
-            if (paddle.left )
-            {
-                player.setVelocityX(-160);
-
-                player.anims.play('left', true);
-            }
-            
-            else if (paddle.right )
-            {
-                player.setVelocityX(160);
-
-                player.anims.play('right', true);
-            }
-            
-            else
-            {
-                player.setVelocityX(0);
-
-                player.anims.play('turn');
-            }
-
-            if (player.body.touching.down && paddle.A)
-                {
-                    player.setVelocityY(-330);
-                }
-        }
-
-    //////////////////////////////////////////////////////////  Control manette //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////  Control Clavier ///////////////////////////////////////////////////////////
     
     if (paddleConnected == false)
         {
@@ -249,21 +223,91 @@ function update ()
                 player.anims.play('turn');
             }
             
+            
+            //---------------//Saut//---------------//
+
             if (player.body.touching.down && cursors.space.isDown)
                 {
-                    player.setVelocityY(-350);
+                    player.setVelocityY(-350); 
+                    jump1 = 1;
                 }
-                    
+            
+
+            //---------------// Check relanche Space //---------------//   
+            if(cursors.space.isUp && jump1 == 1)
+                {
+                    jump2 = 1;
+                }
+
+
+            //---------------// Double Saut//---------------//
+            
+            if (!player.body.touching.down && cursors.space.isDown && jump2 == 1) // quand on re APPUIS
+            {
+                player.setVelocityY(-350);
+                console.log("DOUBLE SAUT");
+                jump1 = 0;
+                jump2 = 0;
+            }
+
+
+            //---------------//Dash Down//---------------//
             if (!player.body.touching.down && cursors.down.isDown)
                 {
                     player.setVelocityY(400);
                 }
 
-         
-            if (keyA.isDown)
+
+            //---------------//Dash attack//---------------//
+            if (keyA.isDown && dashAttack == 0)
             {
-                player.setVelocityY(40);
+                player.setVelocityX(5000);
+                dashAttack = 1;
+                console.log("dashAttack  =",dashAttack);
             }
+
+            if (keyA.isUp && dashAttack == 1)
+            {
+                dashAttack = 0;
+                console.log("dashAttack  =",dashAttack);
+            }
+
+    //////////////////////////////////////////////////////////  Control manette //////////////////////////////////////////////////////////
+
+    this.input.gamepad.once('connected',function(pad)
+    {
+        paddleConnected = true ;
+        paddle = pad ;
+    });
+
+    if (paddleConnected == true)
+        {
+            if (paddle.left )
+            {
+                player.setVelocityX(-160);
+
+                player.anims.play('left', true);
+            }
+            
+            else if (paddle.right )
+            {
+                player.setVelocityX(160);
+
+                player.anims.play('right', true);
+            }
+            
+            else
+            {
+                player.setVelocityX(0);
+
+                player.anims.play('turn');
+            }
+
+            if (player.body.touching.down && paddle.A)
+                {
+                    player.setVelocityY(-330);
+                }
+        }
 
         }    
 }

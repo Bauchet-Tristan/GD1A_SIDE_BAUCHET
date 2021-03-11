@@ -145,56 +145,34 @@ function create ()
 }
 
 var frame = 0; 
+var retenu = 0;
 
 function update ()
+
 {
-    frame = frame +1;
-    if(frame ==70)
-    {
-        frame = 0
-        console.log(frame);
-    }
-
-
     this.input.gamepad.once('connected',function(pad)
     {
         paddleConnected = true ;
         paddle = pad ;
     });
-    
+
     if (gameOver)
     {
         return;
     }
     
-    if (paddleConnected == true)
-        {
-                 if (paddle.left )
-            {
-                player.setVelocityX(-160);
+    /////////////////////////////////////////////////////////////////////////////////////////////////
 
-                player.anims.play('left', true);
-            }
-            
-            else if (paddle.right )
-            {
-                player.setVelocityX(160);
 
-                player.anims.play('right', true);
-            }
-            
-            else
-            {
-                player.setVelocityX(0);
+    frame = frame +1;
 
-                player.anims.play('turn');
-            }
+    if(frame == 70)
+    {
+        frame = 0
+        retenu ++;
+        console.log("retenu =",retenu);
+    }
 
-            if (player.body.touching.down && paddle.A )
-                {
-                    player.setVelocityY(-330);
-                }
-        }
     
     if (paddleConnected == false)
         {
@@ -276,6 +254,41 @@ function update ()
                 ispressed = false;
             }
         }    
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+        if (paddleConnected == true)
+        {
+                 if (paddle.left )
+            {
+                player.setVelocityX(-160);
+
+                player.anims.play('left', true);
+            }
+            
+            else if (paddle.right )
+            {
+                player.setVelocityX(160);
+
+                player.anims.play('right', true);
+            }
+            
+            else
+            {
+                player.setVelocityX(0);
+
+                player.anims.play('turn');
+            }
+
+            if (player.body.touching.down && paddle.A )
+                {
+                    player.setVelocityY(-330);
+                }
+        }
+    
 }
 
     
