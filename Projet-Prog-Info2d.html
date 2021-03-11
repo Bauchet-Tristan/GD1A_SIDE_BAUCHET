@@ -98,7 +98,7 @@ function create ()
     player.setCollideWorldBounds(true);
 
     //Wolf
-    wolf = this.physics.add.sprite(100, 450, 'wolf');
+    wolf = this.physics.add.sprite(500, 500, 'wolf');
     wolf.setCollideWorldBounds(true);
 
 
@@ -130,6 +130,9 @@ function create ()
 
     // Collide the player with the platforms Green
     this.physics.add.collider(player, platforms,GroundGreen);
+
+    // collide with wolf
+    this.physics.add.collider(wolf, platforms,GroundGreen);
     
     // Collide the player with the platforms ICE
     this.physics.add.collider(player, platformsICE,GroundBlue);
@@ -143,21 +146,25 @@ function create ()
 
 function update ()
 {
+    if (gameOver)
+    {
+        return;
+    }
+
+    // Ennemi patern
+    // wolf.setVelocityX(-160);
     
+    //////////////////////////////////////////////////////////  Control manette //////////////////////////////////////////////////////////
+
     this.input.gamepad.once('connected',function(pad)
     {
         paddleConnected = true ;
         paddle = pad ;
     });
-    
-    if (gameOver)
-    {
-        return;
-    }
-    
+
     if (paddleConnected == true)
         {
-                 if (paddle.left )
+            if (paddle.left )
             {
                 player.setVelocityX(-160);
 
@@ -183,6 +190,8 @@ function update ()
                     player.setVelocityY(-330);
                 }
         }
+
+    //////////////////////////////////////////////////////////  Control manette //////////////////////////////////////////////////////////
     
     if (paddleConnected == false)
         {
