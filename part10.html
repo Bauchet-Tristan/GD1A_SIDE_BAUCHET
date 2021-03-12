@@ -129,7 +129,9 @@ function create ()
     bombs = this.physics.add.group();
 
     //  The score
-    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '102px', fill: '#111' });
+    
+    scoreText = this.add.text(0, 165, 'score: 0', { fontSize: '102px', fill: '#111' });
+    this.fixedToCamera = true;
 
     //Camera//////////////////////////////////////
     this.cameras.main.startFollow(player);
@@ -309,6 +311,7 @@ function collectStar (player, star)
     //  Add and update the score
     score += 10;
     scoreText.setText('Score: ' + score);
+    this.fixedToCamera = true;
 
     if (stars.countActive(true) === 0)
     {
