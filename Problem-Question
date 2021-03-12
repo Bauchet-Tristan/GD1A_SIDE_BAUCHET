@@ -14,8 +14,12 @@ setvelocity...
 
 Rendre le saut plus smooth
 
-Recuperer la derniere valeur de deplacement autres que la position ou le dernier changement de position
+CR22 PLUSIEURS DOSSIER AU LIEU DE 1 PRINCIPALE
 
+Recuperer la derniere valeur de deplacement autres que la position ou le dernier changement de position
+Reponse : Variable
+
+//Scene pour interface 
 
 //barre de vie
 //degat
