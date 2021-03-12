@@ -8,18 +8,16 @@ reponse : allez voir les fonction de deplacement autres que "setvelocity"
 Augmenter la taille du perso
 Reponse : Sprite up en taille
 
-Crée un deplacement pour l'ennemi
-setvelocity...
 
 
 Rendre le saut plus smooth
 
-CR22 PLUSIEURS DOSSIER AU LIEU DE 1 PRINCIPALE
+////////////////////
+
+
 
 Recuperer la derniere valeur de deplacement autres que la position ou le dernier changement de position
-Reponse : Variable
-
-//Scene pour interface 
+Recuperer le X des deux collidé lors du collide
 
 //barre de vie
 //degat
