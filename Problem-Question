@@ -5,16 +5,18 @@ Reponse == rajouté de la deco manuellement par dessus en ajoutant de la deco au
 Augmenter la taille du perso
 Reponse : Sprite up en taille
 
+//////////////////////////////////////////////////////
 
+---ennemie ne doit pas êtres bouger par le joueur
 
+-----------------------------------------------------
 
-////////////////////
+/-/-/-/-/-/-/-/ Comment ajouté un ecran Titre sans scene ??? /-/-/-/-/-/-/-/
 
-ennemie ne doit pas êtres bouger par le joueur.
+//Frame invincible color red
+//Tué l'ennemie
+//Saut murale
+//Ralentissement neige
 
-
-//barre de vie
-//degat
-//frame d'invincibilité
-//mort
-
+//obstacle de game over INSTANTANé
+//Power up qui debolque une caacité

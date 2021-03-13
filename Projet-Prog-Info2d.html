@@ -35,7 +35,8 @@ var config = {
 
 var player;
 var wolf;
-var test =0;;
+var timerNoDamage = 0;
+var timerInvincibleFrame =0;
 
 var platforms;
 var ICE = false;
@@ -223,7 +224,6 @@ function create ()
 }
 
 
-
 function PlayerWolf ()
 {   
     GroundBlue();
@@ -239,38 +239,38 @@ function PlayerWolf ()
         player.setVelocityY(-200);
         player.setVelocityX(-200);
     }
-    life= life -1;   
+    loseLife();
 } 
 
-function loseLife () /////////////////dgdfvdfg/////////////////
-{
 
+function loseLife () /////////////////ergrdegf/////////////////
+{
+    if ( timerNoDamage > 210)
+    {
+        console.log("frame d'invulnerabilité END END");
+        timerNoDamage = 0;
+    }
+
+    if(timerNoDamage == 0 )
+    {
+        console.log("Perte de vie");
+        life = life - 1  
+    }
+    else if(timerNoDamage <= 210 )
+    {   
+        console.log("frame d'invulnerabilité");
+    }
 }
 
 
-
-
-
-//////////////////////////////////////////////////////// FUNCTION-UPDATE ////////////////////////////////////////////////////////
-
-function update ()
+function UX ()
 {
-    if (gameOver)
+    if (timerNoDamage <= 210)
     {
-        return;
+        ///////////////// Sprite du perso qui clignote /////////////////
     }
-
-    this.input.gamepad.once('connected',function(pad)
-    {
-        paddleConnected = true ;
-        paddle = pad ;
-    });
-
-/////////////////////////////////////  Camera - Interface  /////////////////////////////////////
-
-    this.cameras.main.startFollow(player,false,0,0,-225,100);
-
-//////// Barre de Vie ////////
+    
+    //////// Barre de Vie ////////
 
     ////
     yin1.x = player.body.position.x + 70;
@@ -293,7 +293,42 @@ function update ()
     yin6.x = player.body.position.x + 445;
     yin6.y = player.body.position.y + 330;
 
-//////// Barre d'spirit ////////
+////////////////////////////////////////// Actualisation barre de Vie ////////////////////////////////////////// 
+
+    if(life <= 0)
+    {
+        yin1.setAlpha(0);
+        gameOver = true;
+    }
+
+    if(life <= 1)
+    {
+        yin2.setAlpha(0);
+    }
+
+    if(life <= 2)
+    {
+        yin3.setAlpha(0);
+    }
+
+    if(life <= 3)
+    {
+        yin4.setAlpha(0);
+    }
+
+    if(life <= 4)
+    {
+        yin5.setAlpha(0);
+    }
+
+    if(life <= 5)
+    {
+        yin6.setAlpha(0);
+    }
+
+
+
+//////// Barre Spirit ////////
 
     ////
     yang1.x = player.body.position.x - 38;
@@ -315,15 +350,50 @@ function update ()
 
     yang6.x = player.body.position.x - 413;
     yang6.y = player.body.position.y + 330;
+}
 
 
+
+
+//////////////////////////////////////////////////////// FUNCTION-UPDATE ////////////////////////////////////////////////////////
+
+function update ()
+{
+///////////////////////////////////////////////////
+    this.input.gamepad.once('connected',function(pad)
+    {
+        paddleConnected = true ;
+        paddle = pad ;
+    });
+///////////////////////////////////////////////////
+    if (gameOver)
+    {
+        this.physics.pause();
+
+        player.setTint(0xff0000);
+
+        player.anims.play('turn');
+
+        return;
+    }
+///////////////////////////////////////////////////
+
+
+
+
+
+    timerNoDamage = timerNoDamage +1;
+    UX();
+
+/////////////////////////////////////  Camera - Interface  /////////////////////////////////////
+
+    this.cameras.main.startFollow(player,false,0,0,-225,100);
 
 ///////////////////////////////////////////////////////  Ennemie  ////////////////////////////////////////////////////////////
 
     // Ennemi patern
     
     timeMove = timeMove+1;
-
 
     if(timeMove <= 150)
     {
@@ -380,10 +450,7 @@ function update ()
             }
             else
             {
-                if(test ==0)//////////"tu t'est arreter la "/////////// PENSE AU BOUNCE
-                {
-                    player.setVelocityX(0);
-                }
+                player.setVelocityX(0);
                 player.setAccelerationX(-0);
                 player.anims.play('turn');
             }
