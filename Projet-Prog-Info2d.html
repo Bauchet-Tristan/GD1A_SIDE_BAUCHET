@@ -82,6 +82,9 @@ var speedSNOW = 120;
 var jump1 = 0;
 var jump2 = 0;
 var jumpAerien = 0;
+var wallJumpLeft = 0;
+var wallJumpRight = 0;
+var tempWalljump = 0;
 
 //Dash attack
 var dashAttackLeft = 0;
@@ -110,6 +113,7 @@ function preload ()
 
     this.load.image('sky', 'assets/sky.png');
 
+    this.load.image('wall', 'assets/platform_verticale.png');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('groundICE', 'assets/platformICE.png');
     this.load.image('groundSNOW', 'assets/platformSNOW.png');
@@ -136,6 +140,9 @@ function create ()
     platformsSNOW.create(600, 410, 'groundSNOW'); // Plateform 1
     platformsICE.create(80, 250, 'groundICE'); // Plateform 2 
     platforms.create(740, 220, 'ground'); // Plateform 3
+
+    //
+    platforms.create(300,200, 'wall').setScale(0.7).refreshBody(); // Plateform Verticale
 
 
     // The player and its settings
@@ -205,11 +212,11 @@ function create ()
 
 /////// Platforms Collider ///////
 
-    // Collide the player with the platforms Green
-    this.physics.add.collider(player, platforms,GroundGreen);
-
     // collide with wolf
     this.physics.add.collider(wolf, platforms);
+
+    // Collide the player with the platforms Green
+    this.physics.add.collider(player, platforms,GroundGreen);
     
     // Collide the player with the platforms ICE
     this.physics.add.collider(player, platformsICE,GroundBlue);
@@ -224,43 +231,6 @@ function create ()
 }
 
 
-function PlayerWolf ()
-{   
-    GroundBlue();
-    if (player.body.position.x >= wolf.body.position.x)
-    {
-        //console.log("PlayerX plus grand");
-        player.setVelocityY(-200);
-        player.setVelocityX(200);
-    }
-    else if(player.body.position.x <= wolf.body.position.x)
-    {
-        //console.log("PlayerX plus petit");
-        player.setVelocityY(-200);
-        player.setVelocityX(-200);
-    }
-    loseLife();
-} 
-
-
-function loseLife () /////////////////ergrdegf/////////////////
-{
-    if ( timerNoDamage > 210)
-    {
-        console.log("frame d'invulnerabilité END END");
-        timerNoDamage = 0;
-    }
-
-    if(timerNoDamage == 0 )
-    {
-        console.log("Perte de vie");
-        life = life - 1  
-    }
-    else if(timerNoDamage <= 210 )
-    {   
-        console.log("frame d'invulnerabilité");
-    }
-}
 
 
 function UX ()
@@ -268,6 +238,12 @@ function UX ()
     if (timerNoDamage <= 210)
     {
         ///////////////// Sprite du perso qui clignote /////////////////
+        player.setTint(0x0f00f0);
+    }
+
+    else 
+    {
+        player.setTint(0xffffff);
     }
     
     //////// Barre de Vie ////////
@@ -355,7 +331,10 @@ function UX ()
 
 
 
-//////////////////////////////////////////////////////// FUNCTION-UPDATE ////////////////////////////////////////////////////////
+
+/*/                                                      FUNCTION-UPDATE                                                     /*/
+
+
 
 function update ()
 {
@@ -484,6 +463,57 @@ function update ()
             player.setVelocityY(-450); 
             jump1 = 1;
         }
+        else if(player.body.touching.left && cursors.space.isDown)
+        {
+            wallJumpLeft = 1;
+        }
+        else if (player.body.touching.right && cursors.space.isDown)
+        {
+            wallJumpRight = 1;
+        }
+        
+        if ((wallJumpRight == 1 || wallJumpLeft == 1) && tempWalljump < 9)
+            {
+                if (wallJumpRight == 1)
+                {
+                    console.log("saut a droite");
+                    player.setVelocityX(-800);
+
+                }
+                else if (wallJumpLeft == 1)
+                {
+                    console.log("saut a gauche");
+                    player.setVelocityX(800);
+                }
+                player.setVelocityY(-300);
+                tempWalljump++;
+            }
+
+            //apres le dash reset notre vitesse 
+            else if (tempWalljump==9) 
+            {
+                player.setAccelerationX(0);
+                GroundGreen();
+                console.log("jean dider");
+                tempWalljump=10;
+            }
+
+            //Met a jour les compteurs des dashs
+            if (cursors.space.isUp && tempWalljump >= 10 && (wallJumpRight == 1 || wallJumpLeft == 1)) 
+            {
+                console.log("RESET !!");
+                wallJumpLeft = 0;
+                wallJumpRight = 0;
+                tempWalljump = 0;
+            }
+
+
+
+
+
+
+
+
         
         //---------------// Check relache Space ET debloque le deuxieme saut//---------------//   
         if(cursors.space.isUp && jump1 == 1)
@@ -549,7 +579,7 @@ function update ()
             //Dash
             if ((dashAttackRight == 1 || dashAttackLeft == 1) && tempDash < 9)
             {
-                if(dashAttackRight == 1)
+                if (dashAttackRight == 1)
                 {
                     player.setVelocityX(1700);
                 }
@@ -561,7 +591,7 @@ function update ()
             }
 
             //apres le dash reset notre vitesse 
-            else if(tempDash==9) 
+            else if (tempDash==9) 
             {
                 player.setVelocityX(0);
                 player.setAccelerationX(0);
@@ -576,7 +606,7 @@ function update ()
                 dashAttackRight = 0;
                 tempDash = 0;
                 dashAerien = 1;
-             }
+            }
         }
         
         if (!player.body.touching.down && dashAerien== 1)
@@ -625,10 +655,56 @@ function update ()
            
 }
 
+
+
+function PlayerWolf ()
+{   
+    if(dashAttackRight == 1 || dashAttackLeft == 1)
+    {
+        wolf.disableBody(true, true);    
+    }
+    else
+    {
+        GroundBlue();
+        if (player.body.position.x >= wolf.body.position.x)
+        {
+            //console.log("PlayerX plus grand");
+            player.setVelocityY(-200);
+            player.setVelocityX(200);
+        }
+        else if(player.body.position.x <= wolf.body.position.x)
+        {
+            //console.log("PlayerX plus petit");
+            player.setVelocityY(-200);
+            player.setVelocityX(-200);
+        }
+        loseLife();
+    }
+} 
+
+function loseLife () /////////////////ergrdegf/////////////////
+{
+    if ( timerNoDamage > 210)
+    {
+        //console.log("frame d'invulnerabilité END END");
+        timerNoDamage = 0;
+    }
+
+    if(timerNoDamage == 0 )
+    {
+        //console.log("Perte de vie");
+        life = life - 1  
+    }
+    else if(timerNoDamage <= 210 )
+    {   
+        //console.log("frame d'invulnerabilité");
+    }
+}
+
 function GroundGreen ()
 {
     ICE = false; 
-    SNOW = false; 
+    SNOW = false;     
 } 
 
 function GroundBlue ()

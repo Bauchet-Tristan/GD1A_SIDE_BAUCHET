@@ -8,15 +8,22 @@ Reponse : Sprite up en taille
 //////////////////////////////////////////////////////
 
 ---ennemie ne doit pas êtres bouger par le joueur
+---équilibrage
 
 -----------------------------------------------------
 
 /-/-/-/-/-/-/-/ Comment ajouté un ecran Titre sans scene ??? /-/-/-/-/-/-/-/
+/-/-/-/-/-/-/-/ Comment faire en sorte qu'un ennemie ne disparaisse pas quand on lui saute dessus "Immovable" /-/-/-/-/-/-/-/
+/-/-/-/-/-/-/-/ Camera qui bloque contre les parois ?? /-/-/-/-/-/-/-/ reponse : faire des grand decors....
 
-//Frame invincible color red
-//Tué l'ennemie
 //Saut murale
 //Ralentissement neige
 
+//Faire des child de l'ennemie//
+
 //obstacle de game over INSTANTANé
 //Power up qui debolque une caacité
+
+
+
+

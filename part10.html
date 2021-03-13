@@ -21,7 +21,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 900 },
+            gravity: { y: 300 },
             debug: true
         }
     },
@@ -50,11 +50,16 @@ var paddle;
 // Life //
 var lifeMax =10;
 var life = 10;
+//saut//
+var wallJumpLeft = 0;
+var wallJumpRight = 0;
+var tempWalljump = 0;
 
 var game = new Phaser.Game(config);
 
 function preload ()
 {
+    this.load.image('wall', 'assets/platform_verticale.png');
     this.load.image('sky', 'assets/sky.png');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('groundICE', 'assets/platformICE.png');
@@ -80,6 +85,8 @@ function create ()
     platforms.create(600, 400, 'ground'); // Plateform 1
     platformsICE.create(50, 250, 'groundICE'); // Plateform 2 
     platforms.create(750, 220, 'ground'); // Plateform 3
+
+    platforms.create(300,200, 'wall').setScale(0.7).refreshBody();
 
     // The player and its settings
     player = this.physics.add.sprite(100, 450, 'dude');
@@ -240,10 +247,58 @@ function update ()
                 }*/
             
             
-            if (!player.body.touching.down && cursors.down.isDown)
+        if (player.body.touching.down && cursors.space.isDown)
+        {
+            player.setVelocityY(-500); 
+            jump1 = 1;
+        }
+        
+        else if(player.body.touching.left && cursors.space.isDown)
+        {
+            wallJumpLeft = 1;
+        }
+        else if (player.body.touching.right && cursors.space.isDown)
+        {
+            wallJumpRight = 1;
+        }
+
+
+
+        if ((wallJumpRight == 1 || wallJumpLeft == 1) && tempWalljump < 9)
+            {
+                if (wallJumpRight == 1)
                 {
-                    player.setVelocityY(500);
+                    console.log("saut a droite");
+                    player.setVelocityX(-800);
+
                 }
+                else if (wallJumpLeft == 1)
+                {
+                    console.log("saut a gauche");
+                    player.setVelocityX(800);
+                }
+                player.setVelocityY(-300);
+                tempWalljump++;
+            }
+
+            //apres le dash reset notre vitesse 
+            else if (tempWalljump==9) 
+            {
+                player.setVelocityX(0);
+                player.setAccelerationX(0);
+                GroundGreen();
+                console.log("jean dider");
+                tempWalljump=10;
+            }
+
+            //Met a jour les compteurs des dashs
+            if (cursors.space.isUp && tempWalljump >= 10 && (wallJumpRight == 1 || wallJumpLeft == 1)) 
+            {
+                console.log("RESET !!");
+                wallJumpLeft = 0;
+                wallJumpRight = 0;
+                tempWalljump = 0;
+            }
             
         
             if (!ispressed && player.body.touching.down && cursors.space.isDown)
@@ -315,7 +370,6 @@ function collectStar (player, star)
     //  Add and update the score
     score += 10;
     scoreText.setText('Score: ' + score);
-    this.fixedToCamera = true;
 
     if (stars.countActive(true) === 0)
     {
@@ -323,7 +377,6 @@ function collectStar (player, star)
         stars.children.iterate(function (child) {
 
             child.enableBody(true, child.x, 0, true, true);
-
         });
 
         var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
