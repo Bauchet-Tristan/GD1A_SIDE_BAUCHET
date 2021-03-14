@@ -11,18 +11,18 @@ Reponse : Sprite up en taille
 ---équilibrage
 
 -----------------------------------------------------
-
+/-/-/-/-/-/-/-/ Collide coté sans exercer de force X /-/-/-/-/-/-/-/ 
 /-/-/-/-/-/-/-/ Comment ajouté un ecran Titre sans scene ??? /-/-/-/-/-/-/-/
 /-/-/-/-/-/-/-/ Comment faire en sorte qu'un ennemie ne disparaisse pas quand on lui saute dessus "Immovable" /-/-/-/-/-/-/-/
+/-/-/-/-/-/-/-/ Faire des childs de l'ennemie /-/-/-/-/-/-/-/
 /-/-/-/-/-/-/-/ Camera qui bloque contre les parois ?? /-/-/-/-/-/-/-/ reponse : faire des grand decors....
 
-//Saut murale
-//Ralentissement neige
 
-//Faire des child de l'ennemie//
+///////////Ralentissement neige//////////
 
-//obstacle de game over INSTANTANé
-//Power up qui debolque une caacité
+
+
+//Power up qui debolque une capacité
 
 
 
