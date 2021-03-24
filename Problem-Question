@@ -1,15 +1,5 @@
-
-Ajouté de la deco sur les plateforme sans qu'elle ai de hit box == 
-Reponse == rajouté de la deco manuellement par dessus en ajoutant de la deco au meme coordonné
-
-Augmenter la taille du perso
-Reponse : Sprite up en taille
-
 Camera qui bloque contre les parois ?? 
 reponse : faire des grand decors...
-
-Collide coté sans exercer de force X
-Reponse : Overlap
 
 //////////////////////////////////////////////////////
 
@@ -32,3 +22,4 @@ INFO 2d
 
 phaser.physics.arcade === this.physics.add.
 
+// regagner de la vie et de l'energie

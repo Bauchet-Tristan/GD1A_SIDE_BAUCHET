@@ -96,6 +96,7 @@ var wallJumpLeft = 0;
 var wallJumpRight = 0;
 var timeWalljump = 0;
 var jumpIsUp = 1;
+var powerUp = true;
 
 //Dash attack
 var dashAttackLeft = 0;
@@ -107,6 +108,7 @@ var lastMove = 0;
 //  Input Events  //
 var cursors;
 var keyA;
+var keyD ;
 
 //  Input Events Pad //
 var paddleConnected = false ;
@@ -120,7 +122,6 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    this.load.image('hitBox', 'assets/hitBox.png');
     this.load.image('hitBox2', 'assets/hitBox2.png');
 
     this.load.image('life', 'assets/Yin.png');
@@ -128,13 +129,16 @@ function preload ()
 
     this.load.image('sky', 'assets/fond-2.png');
     
+    this.load.image('wall', 'assets/Roche.png');
+    this.load.image('wall2', 'assets/Roche_2.png');
+    this.load.image('ground', 'assets/Roche_3.png');
+    this.load.image('ground2', 'assets/Roche_4.png');
 
-    this.load.image('wall', 'assets/rock.png');
-    this.load.image('ground', 'assets/platform.png');
-    this.load.image('groundICE', 'assets/platformICE.png');
+    this.load.image('groundICE', 'assets/Glace.png');
     this.load.image('groundSNOW', 'assets/platformSNOW.png');
 
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('dudeRun', 'assets/Running.png', { frameWidth: 80, frameHeight: 105 });
+    this.load.spritesheet('dudeRunRight', 'assets/RunningRight.png', { frameWidth: 80, frameHeight: 105 });
     this.load.spritesheet('wolf', 'assets/wolf.png', { frameWidth: 32, frameHeight: 48 });
 }
 
@@ -153,17 +157,17 @@ function create ()
     wall = this.physics.add.staticGroup();
 
     // Plateforms horizontal
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // LE SOL
+    platforms.create(400, 800, 'ground').setScale(2).refreshBody(); // LE SOL
     platformsSNOW.create(600, 410, 'groundSNOW'); // Plateform 1
     platformsICE.create(80, 250, 'groundICE'); // Plateform 2 
-    platforms.create(740, 220, 'ground'); // Plateform 3
+    platforms.create(740, 220, 'ground2'); // Plateform 3
 
     // Plateforms vertical
-    wall.create(300,250, 'wall').setScale(0.7).refreshBody(); // Plateform Verticale
-    wall.create(450,150, 'wall').setScale(0.7).refreshBody(); // Plateform Verticale
+    wall.create(500,550, 'wall').setScale(0.7).refreshBody(); // Plateform Verticale
+    wall.create(450,150, 'wall2').setScale(0.7).refreshBody(); // Plateform Verticale
 
     // The player and its settings
-    player = this.physics.add.sprite(375, 500, 'dude');
+    player = this.physics.add.sprite(375, 500, 'dudeRun');
     player.setCollideWorldBounds(true);
     
 
@@ -181,20 +185,21 @@ function create ()
     //  Our player animations, turning, walking left and walking right.
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frames: this.anims.generateFrameNumbers('dudeRun', { start: 0, end: 20 }),
         frameRate: 10,
         repeat: -1
     });
 
     this.anims.create({
         key: 'turn',
-        frames: [ { key: 'dude', frame: 4 } ],
-        frameRate: 20
+        frames: this.anims.generateFrameNumbers('dudeRun', { start: 0, end: 20 }),
+        frameRate: 10,
+        repeat: -1
     });
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frames: this.anims.generateFrameNumbers('dudeRunRight', { start: 0, end: 20 }),
         frameRate: 10,
         repeat: -1
     });
@@ -203,6 +208,7 @@ function create ()
     //  Input Events  //
     cursors = this.input.keyboard.createCursorKeys();
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     ////// end Input //////
 
 
@@ -281,7 +287,7 @@ function update ()
 
         player.setTint(0xff0000);
 
-        player.anims.play('turn');
+        player.anims.play('turn',true);
 
         return;
     }
@@ -289,9 +295,10 @@ function update ()
 ///////////////////////////////////////////////////
 
     timerNoDamage = timerNoDamage +1;
+    balanced();
     UX();
     hitBoxWall();
-
+    
 /////////////////////////////////////  Camera - Interface  /////////////////////////////////////
 
     this.cameras.main.startFollow(player,false,0,0,-225,100);
@@ -354,7 +361,7 @@ function update ()
             {
                 player.setVelocityX(0);
                 player.setAccelerationX(0);
-                player.anims.play('turn');
+                player.anims.play('turn',true);
             }
         }
 
@@ -374,7 +381,7 @@ function update ()
             else
             {
                 player.setAccelerationX(-0);
-                player.anims.play('turn');
+                player.anims.play('turn',true);
             }
         }
         
@@ -394,7 +401,7 @@ function update ()
             {
                 player.setVelocityX(0);
                 player.setAccelerationX(0);
-                player.anims.play('turn');
+                player.anims.play('turn',true);
             }
         }
         
@@ -434,7 +441,7 @@ function update ()
         {
             player.setVelocityX(0);
 
-            player.anims.play('turn');
+            player.anims.play('turn',true);
         }
 
         if (player.body.touching.down && paddle.A)
@@ -471,81 +478,146 @@ function UX ()
     ////
     yin1.x = player.body.position.x + 70;
     yin1.y = player.body.position.y + 330;
+    if (life >= 1)
+    {
+        yin1.setAlpha(1);
+    }
+    else
+    {
+        yin1.setAlpha(0);
+        gameOver=true;
+    }
 
     yin2.x = player.body.position.x + 145;
     yin2.y = player.body.position.y + 330;
-
-    /////
-    yin3.x = player.body.position.x + 220;
-    yin3.y = player.body.position.y + 330;
-    
-    yin4.x = player.body.position.x + 295;
-    yin4.y = player.body.position.y + 330;
-
-    ////
-    yin5.x = player.body.position.x + 370;
-    yin5.y = player.body.position.y + 330;
-
-    yin6.x = player.body.position.x + 445;
-    yin6.y = player.body.position.y + 330;
-
-////////////////////////////////////////// Actualisation barre de Vie ////////////////////////////////////////// 
-
-    if(life <= 0)
+    if (life >= 2)
     {
-        yin1.setAlpha(0);
-        gameOver = true;
+        yin2.setAlpha(1);
     }
-
-    if(life <= 1)
+    else
     {
         yin2.setAlpha(0);
     }
 
-    if(life <= 2)
+    /////
+    yin3.x = player.body.position.x + 220;
+    yin3.y = player.body.position.y + 330;
+    if (life >= 3)
+    {
+        yin3.setAlpha(1);
+    }
+    else
     {
         yin3.setAlpha(0);
     }
-
-    if(life <= 3)
+    
+    yin4.x = player.body.position.x + 295;
+    yin4.y = player.body.position.y + 330;
+    if (life >= 4)
+    {
+        yin4.setAlpha(1);
+    }
+    else
     {
         yin4.setAlpha(0);
     }
 
-    if(life <= 4)
+    ////
+    yin5.x = player.body.position.x + 370;
+    yin5.y = player.body.position.y + 330;
+    if (life >= 5)
+    {
+        yin5.setAlpha(1);
+    }
+    else
     {
         yin5.setAlpha(0);
     }
 
-    if(life <= 5)
+    yin6.x = player.body.position.x + 445;
+    yin6.y = player.body.position.y + 330;
+    if (life >= 6)
+    {
+        yin6.setAlpha(1);
+    }
+    else
     {
         yin6.setAlpha(0);
     }
 
-
+////////////////////////////////////////// Actualisation barre de Vie ////////////////////////////////////////// 
 
 //////// Barre Spirit ////////
 
     ////
     yang1.x = player.body.position.x - 38;
     yang1.y = player.body.position.y + 330;
+    if (spirit >= 1)
+    {
+        yang1.setAlpha(1);
+    }
+    else
+    {
+        yang1.setAlpha(0);
+    }
 
     yang2.x = player.body.position.x - 113;
     yang2.y = player.body.position.y + 330;
 
+    if (spirit >= 2)
+    {
+        yang2.setAlpha(1);
+    }
+    else
+    {
+        yang2.setAlpha(0);
+    }
+
     /////
     yang3.x = player.body.position.x - 188;
     yang3.y = player.body.position.y + 330;
+    if (spirit >= 3)
+    {
+        yang3.setAlpha(1);
+    }
+    else
+    {
+        yang3.setAlpha(0);
+    }
     
     yang4.x = player.body.position.x - 263;
     yang4.y = player.body.position.y + 330;
+    if (spirit >= 4)
+    {
+        yang4.setAlpha(1);
+    }
+    else
+    {
+        yang4.setAlpha(0);
+    }
 
     ////
     yang5.x = player.body.position.x - 338;
     yang5.y = player.body.position.y + 330;
+    if (spirit >= 5)
+    {
+        yang5.setAlpha(1);
+    }
+    else
+    {
+        yang5.setAlpha(0);
+    }
 
     yang6.x = player.body.position.x - 413;
     yang6.y = player.body.position.y + 330;
+    if (spirit >= 6)
+    {
+        yang6.setAlpha(1);
+    }
+    else
+    {
+        yang6.setAlpha(0);
+    }
 }
 
 
@@ -573,6 +645,22 @@ function PlayerWolf ()
         LoseLife();
     }
 } 
+
+function balanced()
+{
+    if(keyD.isDown)
+    {
+        //console.log(life);
+        //console.log(retenu);
+        var retenu = spirit + life;
+        //console.log(Math.floor(retenu/2));
+        if(Math.floor(retenu/2) > 0)
+        {
+            life = Math.floor(retenu /2);
+            spirit = Math.floor(retenu/2);
+        }
+    }
+}
 
 function LoseLife () /////////////////ergrdegf/////////////////
 {
@@ -613,8 +701,6 @@ function GroundWhite ()
 
 
 
-
-
 function Saut()
 {
     //---------------// Saut //---------------//
@@ -623,46 +709,60 @@ function Saut()
         player.setVelocityY(-450); 
         jump1 = 1;
         jumpIsUp = 0;
-    }        
-
-    //---------------// Check relache Space ET debloque le deuxieme saut//---------------//   
-    if(cursors.space.isUp && jump1 == 1 )
+    }     
+    if(powerUp == true)
     {
-        jump2 = 1;
-        jumpIsUp = 1;
-    }
 
-    //---------------// Check si en l'air sans utiliser Saut 1 ET debloque le deuxieme saut//---------------//   
-    if (!player.body.touching.down && jumpAerien == 0 && jump1 == 0)
+        //---------------// Check relache Space ET debloque le deuxieme saut//---------------//   
+        if(cursors.space.isUp && jump1 == 1 )
+        {
+            jump2 = 1;
+            jumpIsUp = 1;
+        }
+
+        //---------------// Check si en l'air sans utiliser Saut 1 ET debloque le deuxieme saut//---------------//   
+        if (!player.body.touching.down && jumpAerien == 0 && jump1 == 0)
+        {
+            jump1 = 1;
+            jumpAerien = 1;
+            jump2 = 1;
+        }
+
+        //---------------// Double Saut //---------------//  
+        if (!player.body.touching.down && cursors.space.isDown && jump2 == 1 && (wallJumpRight == 0 && wallJumpLeft == 0)) // quand on re APPUIS
+        {
+            player.setVelocityY(-350);
+            jump1 = 0;
+            jump2 = 0;
+            jumpAerien = 1;
+            jumpIsUp = 0;
+            GroundGreen();
+        }
+        if(cursors.space.isUp && jump2 == 0 )
+        {
+            jumpIsUp = 1;
+        }
+
+        //---------------// reset si on a pas utiliser notre double saut //---------------// 
+        if (player.body.touching.down && jump2 == 1 )
+        {
+            jump1 = 0;
+            jump2 = 0;
+        }
+
+        //---------------// reset si on a pas utiliser notre sautAerien //---------------// 
+        if (player.body.touching.down && jumpAerien == 1 )
+        {
+            jumpAerien =0;
+        }
+    }
+    else
     {
-        jump1 = 1;
-        jumpAerien = 1;
-        jump2 = 1;
+        if(cursors.space.isUp && jump1 ==1)
+        {
+            jumpIsUp=1;
+        }
     }
-
-    //---------------// Double Saut //---------------//  
-    if (!player.body.touching.down && cursors.space.isDown && jump2 == 1 && (wallJumpRight == 0 && wallJumpLeft == 0)) // quand on re APPUIS
-    {
-        player.setVelocityY(-350);
-        jump1 = 0;
-        jump2 = 0;
-        jumpAerien = 1;
-        GroundGreen();
-    }
-
-    //---------------// reset si on a pas utiliser notre double saut //---------------// 
-    if (player.body.touching.down && jump2 == 1 )
-    {
-        jump1 = 0;
-        jump2 = 0;
-    }
-
-    //---------------// reset si on a pas utiliser notre sautAerien //---------------// 
-    if (player.body.touching.down && jumpAerien == 1 )
-    {
-        jumpAerien =0;
-    }
-
 ///////////////////////////////////////// WALL JUMP /////////////////////////////////////////
 
     if(hitLeft!=0 && cursors.space.isDown )
@@ -741,18 +841,18 @@ function hitBoxWall()
     //hitBoxRight.setAlpha(0);
     hitBoxRight.setVelocityY(0);
     hitBoxRight.setVelocityX(0);
-    hitBoxRight.x = player.x +22; 
-    hitBoxRight.y = player.y; 
-    hitBoxRight.body.position.x = player.body.position.x +32;
-    hitBoxRight.body.position.y = player.body.position.y+9;
+    hitBoxRight.x = player.x +45; 
+    hitBoxRight.y = player.y - 10; 
+    hitBoxRight.body.position.x = player.body.position.x +80;
+    hitBoxRight.body.position.y = player.body.position.y ;
 
     //hitBoxLeft.setAlpha(0);
     hitBoxLeft.setVelocityY(0);
     hitBoxLeft.setVelocityX(0);
-    hitBoxLeft.x = player.x -20; 
-    hitBoxLeft.y = player.y; 
+    hitBoxLeft.x = player.x -45; 
+    hitBoxLeft.y = player.y-10; 
     hitBoxLeft.body.position.x = player.body.position.x -10;
-    hitBoxLeft.body.position.y = player.body.position.y+9;
+    hitBoxLeft.body.position.y = player.body.position.y;
 }
 
 
@@ -760,7 +860,7 @@ function Dash()
 {
     //---------------// Dash attack //---------------//
 
-    if (dashAerien == 0)
+    if (dashAerien == 0 && spirit > 0)
     {
         //Regarde si on veut dash a gauche ou a droite
         if (lastMove == "right" && keyA.isDown && (dashAttackRight == 0 || dashAttackLeft == 0))
@@ -803,6 +903,7 @@ function Dash()
             dashAttackRight = 0;
             tempDash = 0;
             dashAerien = 1;
+            spirit--;
         }
     }
 
