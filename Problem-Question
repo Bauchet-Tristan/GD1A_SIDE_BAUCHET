@@ -24,20 +24,18 @@ phaser.physics.arcade === this.physics.add.
 
 
 
+
 Mort instantané
 
-//power up
-
-//animation saut
-////animation saut mural
 animation attack
 animation Loup
 
 
 ecran acceuille
 
-faire les video de presentation
+faire les videos de presentation
 
 //
-Changer les hit Box
+
+Changer les hit Box ==== Set-size
 Zone de régéneration
