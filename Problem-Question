@@ -26,12 +26,13 @@ phaser.physics.arcade === this.physics.add.
 
 //Mort instantané
 
-power up
+//power up
 
-animation saut
+//animation saut
+////animation saut mural
 animation attack
 animation Loup
-animation saut mural
+
 
 ecran acceuille
 
