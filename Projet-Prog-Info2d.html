@@ -126,13 +126,18 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
+    this.load.image('nuage1', 'assets/Nuage1.png');
+    this.load.image('nuage2', 'assets/Nuage2.png');
+    this.load.image('nuage3', 'assets/Nuage3.png');
+    this.load.image('nuage4', 'assets/Nuage4.png');
+
     this.load.image('bonus', 'assets/Bonus.png');
     this.load.image('hitBox2', 'assets/hitBox2.png');
 
     this.load.image('life', 'assets/Yin.png');
     this.load.image('spirit', 'assets/Yang.png');
 
-    this.load.image('sky', 'assets/fond-1.png');
+    this.load.image('sky', 'assets/fond-2.png');
     
     this.load.image('wall', 'assets/Wall1.png');
     this.load.image('wall2', 'assets/Wall2.png');
@@ -158,6 +163,12 @@ function create ()
 {
     //  A simple background for our game
     this.add.image(1920, 1080, 'sky');
+    
+    // Cloud
+    this.add.image(3800, 500, 'nuage1');
+    this.add.image(3700, 600, 'nuage2');
+    this.add.image(3800, 400, 'nuage3');
+    this.add.image(3700, 500, 'nuage4');
 
     //  The platforms group contains the ground and the ledges we can jump on
     platfromMort = this.physics.add.staticGroup();
@@ -166,6 +177,7 @@ function create ()
     platformsSNOW = this.physics.add.staticGroup();
     wall = this.physics.add.staticGroup();
 
+    // partie1////////////////
     // Plateforms horizontal
     platfromMort.create(1500,2800,'ground').setScale(13).refreshBody();
     platforms.create(900, 1800, 'ground').setScale(2).refreshBody(); // LE SOL
@@ -177,6 +189,7 @@ function create ()
    
     //Ice
     platformsICE.create(1000, 1100, 'groundICE').setScale(1.2).refreshBody(); // Plateform 2 
+    platformsICE.create(1600, 945, 'groundICE').setScale(1.2).refreshBody();
     
 
     // Plateforms vertical
@@ -184,11 +197,21 @@ function create ()
     wall.create(2200,1500, 'wall2').setScale(1).refreshBody(); // Plateform Verticale
     wall.create(1900,1350, 'wall').setScale(1).refreshBody(); // Plateform Verticale
     wall.create(2200,1130, 'wall').setScale(1).refreshBody(); // Plateform Verticale
-
     wall.create(750,1100, 'wall').setScale(1).refreshBody(); // Plateform Verticale
+      
+    // partie2/////////////////
+
+    platformsSNOW.create(2500, 1005, 'groundSNOW2').setScale(1.2).refreshBody(); // LE SOL
+
+    wall.create(2600,770, 'wall2').setScale(1).refreshBody(); // Plateform Verticale
+    wall.create(2300,520, 'wall').setScale(1).refreshBody(); // Plateform Verticale
+    platforms.create(2850, 655, 'ground2').setScale(1.2).refreshBody(); 
+    platforms.create(3320, 655, 'ground2').setScale(1.2).refreshBody();   
+
+
 
     // The player and its settings
-    player = this.physics.add.sprite(900,1000, 'dudeIdle');
+    player = this.physics.add.sprite(2500,500, 'dudeIdle');
     player.setCollideWorldBounds(true);
     
     hitBoxRight = this.physics.add.image(0,0,'hitBox2');
@@ -198,7 +221,7 @@ function create ()
     bonus = this.physics.add.image(1500,1050,'bonus');
 
     //Wolf
-    wolf = this.physics.add.sprite(500, 500, 'wolf');
+    wolf = this.physics.add.sprite(3500, 500, 'wolf');
     wolf.setCollideWorldBounds(true);
 
 
@@ -372,6 +395,7 @@ function update ()
         player.x = 750;
         player.y = 1500;
         life = 6;
+        spirit =6;
         gameOver = false;
     }
 
@@ -395,12 +419,12 @@ function update ()
     if(timeMove <= 210)
     {
         wolf.anims.play('WolfLeft',true);
-        wolf.setVelocityX(-160);
+        wolf.setVelocityX(-400);
     }
-    else if(timeMove > 210 && timeMove <=410 )
+    else if(timeMove > 210 && timeMove <420 )
     {
         wolf.anims.play('WolfRight',true);
-        wolf.setVelocityX(160);
+        wolf.setVelocityX(400);
     }
     else
     {
@@ -555,17 +579,6 @@ function update ()
 
 
 //////////////////////////////////////////////////////////  Control manette //////////////////////////////////////////////////////////
-
-
-    if (pad.A )
-    {
-        player.setVelocityX(-160);
-    }
-    
-    else if (pad.B)
-    {
-        player.setVelocityX(160);
-    }
     
     RESET();
            
@@ -956,7 +969,7 @@ function WallJumpRight()
 
 function hitBoxWall()
 {
-    //hitBoxRight.setAlpha(0);
+    hitBoxRight.setAlpha(0);
     hitBoxRight.setVelocityY(0);
     hitBoxRight.setVelocityX(0);
     hitBoxRight.x = player.x +45; 
@@ -964,7 +977,7 @@ function hitBoxWall()
     hitBoxRight.body.position.x = player.body.position.x +80;
     hitBoxRight.body.position.y = player.body.position.y ;
 
-    //hitBoxLeft.setAlpha(0);
+    hitBoxLeft.setAlpha(0);
     hitBoxLeft.setVelocityY(0);
     hitBoxLeft.setVelocityX(0);
     hitBoxLeft.x = player.x -45; 
