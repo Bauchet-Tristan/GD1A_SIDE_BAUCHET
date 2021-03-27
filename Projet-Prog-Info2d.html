@@ -188,7 +188,7 @@ function create ()
     wall.create(750,1100, 'wall').setScale(1).refreshBody(); // Plateform Verticale
 
     // The player and its settings
-    player = this.physics.add.sprite(750,1500, 'dudeIdle');
+    player = this.physics.add.sprite(900,1000, 'dudeIdle');
     player.setCollideWorldBounds(true);
     
     hitBoxRight = this.physics.add.image(0,0,'hitBox2');
@@ -347,6 +347,7 @@ function Mort()
 function DoubleJump()
 {
     powerUp = true;
+    bonus.disableBody(true,true);
     bonus.setAlpha(0);
 }
 
