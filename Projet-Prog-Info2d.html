@@ -610,12 +610,171 @@ function update ()
     }
     else if (paddleConnected == true)
     {
-        console.log("manette");
-        if(paddle.A)
+        //console.log("manette");
+        if (paddle.R2)
         {
-            console.log("A");
-            player.setVelocityX(500);
+            lastMove = "left";
         }
+        if (paddle.R1)
+        {
+            lastMove = "right";
+        }
+        
+        if (ICE == false)
+        {
+            if (paddle.R2)
+            {   
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunLeft', true);
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+                Run = "left";
+                player.setVelocityX(-310);
+            }
+            else if (paddle.R2)
+            {            
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunRight', true);
+                }
+                else
+                {
+                    player.anims.play('JumpRight', true);
+                }
+                Run = "right";
+                player.setVelocityX(310);
+            }
+            else
+            {
+                player.setVelocityX(0);
+                player.setAccelerationX(0);
+                if(player.body.touching.down)
+                {
+                    if(Run == "left")
+                    {
+                        player.anims.play('IdleLeft',true);
+                    }
+                    else if (Run == "right")
+                    {
+                        player.anims.play('IdleRight',true);
+                    }
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+            }
+        }
+
+    ////////////////////////////////////////// ICE //////////////////////////////////////////
+        else if (ICE == true)
+        {
+            if (cursors.left.isDown)
+            {
+                player.setAccelerationX(-200);
+                Run = "left";
+
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunLeft', true);
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+            }
+            else if (cursors.right.isDown)
+            {
+                player.setAccelerationX(200);
+                Run = "right";
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunRight', true);
+                }
+                else
+                {
+                    player.anims.play('JumpRight', true);
+                }
+            }
+            else
+            {
+                player.setAccelerationX(-0);
+                if(player.body.touching.down)
+                {
+                    if(Run == "left")
+                    {
+                        player.anims.play('IdleLeft',true);
+                    }
+                    else if (Run == "right")
+                    {
+                        player.anims.play('IdleRight',true);
+                    }
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+                
+            }
+        }
+        ////////////////////////snow/////////////////////////
+        if(SNOW == true)
+        {
+            if (cursors.left.isDown)
+            {
+                player.setVelocityX(-125);
+                Run = "left";
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunLeft', true);
+                }
+                else
+                {
+                    player.anims.play('Jump', true);
+                }
+                
+            }
+            else if (cursors.right.isDown)
+            {
+                Run = "right";
+                player.setVelocityX(125);
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunRight', true);
+                }
+                else
+                {
+                    player.anims.play('JumpRight', true);
+                }
+            }
+            else
+            {
+                player.setVelocityX(0);
+                player.setAccelerationX(0);
+                if(Run == "left")
+                {
+                    player.anims.play('IdleLeft',true);
+                }
+                else if (Run == "right")
+                {
+                    player.anims.play('IdleRight',true);
+                }
+            }
+        }
+        
+        Saut();
+
+        //---------------// Dash Down //---------------//
+        if (!player.body.touching.down && cursors.down.isDown)
+        {
+            player.setVelocityY(400);
+        }
+
+        Dash();
     }
 
 
