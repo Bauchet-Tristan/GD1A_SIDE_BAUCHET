@@ -34,7 +34,9 @@ var config = {
         update: update
     }
 };
-
+    
+var a = false;
+var r1 = false;
 var paddle;
 var paddleConnected=false;
 
@@ -223,7 +225,7 @@ function create ()
     this.add.image(3600, 500, 'nuage1');
 
     // The player and its settings
-    player = this.physics.add.sprite(750,1500, 'dudeIdle');
+    player = this.physics.add.sprite(2800,500, 'dudeIdle');
     player.setCollideWorldBounds(true);
     
     hitBoxRight = this.physics.add.image(0,0,'hitBox2');
@@ -423,12 +425,12 @@ function update ()
     
     timeMove = timeMove+1;
 
-    if(timeMove <= 210)
+    if(timeMove <= 150)
     {
         wolf.anims.play('WolfLeft',true);
         wolf.setVelocityX(-400);
     }
-    else if(timeMove > 210 && timeMove <420 )
+    else if(timeMove > 150 && timeMove <=300 )
     {
         wolf.anims.play('WolfRight',true);
         wolf.setVelocityX(400);
@@ -608,21 +610,41 @@ function update ()
 
         Dash();
     }
+    
     else if (paddleConnected == true)
     {
+        if(paddle.X)
+        {
+            //console.log(life);
+            //console.log(retenu);
+            var retenu = spirit + life;
+            //console.log(Math.floor(retenu/2));
+            if(Math.floor(retenu/2) > 0)
+            {
+                life = Math.floor(retenu /2);
+                spirit = Math.floor(retenu/2);
+            }
+        }
+        if(paddle.A)
+        {
+            a = true;
+        }
+        else{
+            a =false;
+        }
         //console.log("manette");
-        if (paddle.R2)
+        if (paddle.L2)
         {
             lastMove = "left";
         }
-        if (paddle.R1)
+        if (paddle.R2)
         {
             lastMove = "right";
         }
         
         if (ICE == false)
         {
-            if (paddle.R2)
+            if (paddle.L2)
             {   
                 if(player.body.touching.down)
                 {
@@ -673,7 +695,7 @@ function update ()
     ////////////////////////////////////////// ICE //////////////////////////////////////////
         else if (ICE == true)
         {
-            if (cursors.left.isDown)
+            if (paddle.L2)
             {
                 player.setAccelerationX(-200);
                 Run = "left";
@@ -687,7 +709,7 @@ function update ()
                     player.anims.play('JumpLeft', true);
                 }
             }
-            else if (cursors.right.isDown)
+            else if (paddle.R2)
             {
                 player.setAccelerationX(200);
                 Run = "right";
@@ -724,7 +746,7 @@ function update ()
         ////////////////////////snow/////////////////////////
         if(SNOW == true)
         {
-            if (cursors.left.isDown)
+            if (paddle.L2)
             {
                 player.setVelocityX(-125);
                 Run = "left";
@@ -738,7 +760,7 @@ function update ()
                 }
                 
             }
-            else if (cursors.right.isDown)
+            else if (paddle.R2)
             {
                 Run = "right";
                 player.setVelocityX(125);
@@ -766,15 +788,203 @@ function update ()
             }
         }
         
-        Saut();
+        
+    //---------------// Saut //---------------//
+        if(player.body.touching.down && a == true && jumpIsUp == 1)
+        {
+            player.setVelocityY(-450); 
+            jump1 = 1;
+            jumpIsUp = 0;
+        }     
+        if(powerUp == true)
+        {
+
+            //---------------// Check relache Space ET debloque le deuxieme saut//---------------//   
+            if(a == false && jump1 == 1 )
+            {
+                jump2 = 1;
+                jumpIsUp = 1;
+            }
+
+            //---------------// Check si en l'air sans utiliser Saut 1 ET debloque le deuxieme saut//---------------//   
+            if (!player.body.touching.down && jumpAerien == 0 && jump1 == 0)
+            {
+                jump1 = 1;
+                jumpAerien = 1;
+                jump2 = 1;
+            }
+
+            //---------------// Double Saut //---------------//  
+            if (!player.body.touching.down && a == true && jump2 == 1 && (wallJumpRight == 0 && wallJumpLeft == 0)) // quand on re APPUIS
+            {
+                player.setVelocityY(-400);
+                jump1 = 0;
+                jump2 = 0;
+                jumpAerien = 1;
+                jumpIsUp = 0;
+                GroundGreen();
+            }
+            if(a == false && jump2 == 0 )
+            {
+                jumpIsUp = 1;
+            }
+
+            //---------------// reset si on a pas utiliser notre double saut //---------------// 
+            if (player.body.touching.down && jump2 == 1 )
+            {
+                jump1 = 0;
+                jump2 = 0;
+            }
+
+            //---------------// reset si on a pas utiliser notre sautAerien //---------------// 
+            if (player.body.touching.down && jumpAerien == 1 )
+            {
+                jumpAerien =0;
+            }
+        }
+        else
+        {
+            if(cursors.space.isUp && jump1 ==1)
+            {
+                jumpIsUp=1;
+            }
+        }
+    ///////////////////////////////////////// WALL JUMP /////////////////////////////////////////
+
+        if(hitLeft!=0 && a == true )
+        {
+            //console.log("touche gauche");
+            wallJumpRight = 1;
+        }
+
+        if(hitRight !=0 && a == true )
+        {
+            //console.log("touche droite");
+            wallJumpLeft = 1;
+        }
+
+
+        if ((wallJumpRight == 1 || wallJumpLeft == 1) && timeWalljump <= 27)
+        {
+            GroundGreen();
+            if(timeWalljump==0)
+            {
+                player.setVelocityX(0);
+                player.setAccelerationX(0);
+                player.setVelocityY(-300);
+            }
+
+            if (wallJumpRight == 1)
+            {
+                //console.log("saut a droite");
+                player.setVelocityX(400);
+
+                if(hitRight != 0)
+                {
+                    console.log("saut a droite");
+                    timeWalljump = 27;
+                }
+            }
+
+            if (wallJumpLeft == 1)
+            {
+                //console.log("saut a gauche");
+                player.setVelocityX(-400);
+
+                if(hitLeft != 0)
+                {
+                    console.log("saut a gauche");
+                    timeWalljump = 27;
+                }
+            }
+            timeWalljump++;
+        }
+
+        //wall jump compteur reset
+        if (timeWalljump >= 27 && (wallJumpRight == 1 || wallJumpLeft == 1)) 
+        {
+            //console.log("RESET !!");
+            wallJumpLeft = 0;
+            wallJumpRight = 0;
+            timeWalljump = 0;
+        }
+    
 
         //---------------// Dash Down //---------------//
-        if (!player.body.touching.down && cursors.down.isDown)
+        if (!player.body.touching.down && paddle.B)
         {
             player.setVelocityY(400);
         }
 
-        Dash();
+        
+        //---------------// Dash attack //---------------//
+
+    if (dashAerien == 0 && spirit > 0)
+    {
+        if(paddle.R1)
+        {
+            r1 = true;
+        }
+        else 
+        {
+           r1 = false;
+        }
+        //Regarde si on veut dash a gauche ou a droite
+        if (lastMove == "right" && r1 == true && (dashAttackRight == 0 || dashAttackLeft == 0))
+        { 
+            dashAttackRight = 1;
+        }
+
+        if (lastMove == "left" && r1 == true && (dashAttackRight == 0 || dashAttackLeft == 0))
+        { 
+            dashAttackLeft = 1;
+        }
+
+        //Dash
+        if ((dashAttackRight == 1 || dashAttackLeft == 1) && tempDash < 11)
+        {
+            player.setAlpha(0);
+            if (dashAttackRight == 1)
+            {
+                player.setVelocityX(2000);
+            }
+            else if (dashAttackLeft == 1)
+            {
+                player.setVelocityX(-2000);
+            }
+            tempDash++;
+        }
+
+        //Apres le dash reset notre vitesse 
+        else if (tempDash==11) 
+        {
+            player.setVelocityX(0);
+            player.setAccelerationX(0);
+            GroundGreen();
+            tempDash=12;
+            player.setAlpha(1);
+        }
+
+        //Met a jour les compteurs des dashs
+        if (r1 == false && tempDash >= 12 && (dashAttackRight == 1 || dashAttackLeft == 1)) 
+        {
+            player.setAlpha(1);
+            dashAttackLeft = 0;
+            dashAttackRight = 0;
+            tempDash = 0;
+            dashAerien = 1;
+            spirit--;
+        }
+    }
+
+    if (!player.body.touching.down && dashAerien== 1)
+    {
+
+    }
+    else if (player.body.touching.down && dashAerien== 1)
+    {
+        dashAerien = 0;
+    }
     }
 
 
