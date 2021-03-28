@@ -25,7 +25,9 @@ var config = {
             debug: true
         }
     },
-    input:{gamepad:true},
+    input:{
+        gamepad:true
+    },
     scene: {
         preload: preload,
         create: create,
@@ -33,6 +35,8 @@ var config = {
     }
 };
 
+var paddle;
+var paddleConnected=false;
 
 //bonus
 var bonus;
@@ -104,7 +108,7 @@ var wallJumpLeft = 0;
 var wallJumpRight = 0;
 var timeWalljump = 0;
 var jumpIsUp = 1;
-var powerUp = true;
+var powerUp = false;
 
 //Dash attack
 var dashAttackLeft = 0;
@@ -219,7 +223,7 @@ function create ()
     this.add.image(3600, 500, 'nuage1');
 
     // The player and its settings
-    player = this.physics.add.sprite(2500,500, 'dudeIdle');
+    player = this.physics.add.sprite(750,1500, 'dudeIdle');
     player.setCollideWorldBounds(true);
     
     hitBoxRight = this.physics.add.image(0,0,'hitBox2');
@@ -377,9 +381,16 @@ function create ()
 
 function update ()
 {
+    this.input.gamepad.once('connected', function (pad) {
+    //   'pad' is a reference to the gamepad that was just connected
+    paddleConnected = true;
+    paddle = pad;
+    });
+
+///////////////////////////////////////////////////
     win.setAlpha(0);
 ///////////////////////////////////////////////////
-
+    
     if (gameOver)
     {
         player.x = 750;
@@ -429,50 +440,153 @@ function update ()
 
 ///////////////////////////////////////////////////////  Control Clavier /////////////////////////////////////////////////////
 
-
-    if (cursors.left.isDown)
+    if(paddleConnected == false)
     {
-        lastMove = "left";
-    }
-    if (cursors.right.isDown)
-    {
-        lastMove = "right";
-    }
-    
-    if (ICE == false)
-    {
+        
         if (cursors.left.isDown)
-        {   
-            if(player.body.touching.down)
-            {
-                player.anims.play('RunLeft', true);
-            }
-            else
-            {
-                player.anims.play('JumpLeft', true);
-            }
-            Run = "left";
-            player.setVelocityX(-310);
-        }
-        else if (cursors.right.isDown)
-        {            
-            if(player.body.touching.down)
-            {
-                player.anims.play('RunRight', true);
-            }
-            else
-            {
-                player.anims.play('JumpRight', true);
-            }
-            Run = "right";
-            player.setVelocityX(310);
-        }
-        else
         {
-            player.setVelocityX(0);
-            player.setAccelerationX(0);
-            if(player.body.touching.down)
+            lastMove = "left";
+        }
+        if (cursors.right.isDown)
+        {
+            lastMove = "right";
+        }
+        
+        if (ICE == false)
+        {
+            if (cursors.left.isDown)
+            {   
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunLeft', true);
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+                Run = "left";
+                player.setVelocityX(-310);
+            }
+            else if (cursors.right.isDown)
+            {            
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunRight', true);
+                }
+                else
+                {
+                    player.anims.play('JumpRight', true);
+                }
+                Run = "right";
+                player.setVelocityX(310);
+            }
+            else
             {
+                player.setVelocityX(0);
+                player.setAccelerationX(0);
+                if(player.body.touching.down)
+                {
+                    if(Run == "left")
+                    {
+                        player.anims.play('IdleLeft',true);
+                    }
+                    else if (Run == "right")
+                    {
+                        player.anims.play('IdleRight',true);
+                    }
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+            }
+        }
+
+    ////////////////////////////////////////// ICE //////////////////////////////////////////
+        else if (ICE == true)
+        {
+            if (cursors.left.isDown)
+            {
+                player.setAccelerationX(-200);
+                Run = "left";
+
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunLeft', true);
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+            }
+            else if (cursors.right.isDown)
+            {
+                player.setAccelerationX(200);
+                Run = "right";
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunRight', true);
+                }
+                else
+                {
+                    player.anims.play('JumpRight', true);
+                }
+            }
+            else
+            {
+                player.setAccelerationX(-0);
+                if(player.body.touching.down)
+                {
+                    if(Run == "left")
+                    {
+                        player.anims.play('IdleLeft',true);
+                    }
+                    else if (Run == "right")
+                    {
+                        player.anims.play('IdleRight',true);
+                    }
+                }
+                else
+                {
+                    player.anims.play('JumpLeft', true);
+                }
+                
+            }
+        }
+        ////////////////////////snow/////////////////////////
+        if(SNOW == true)
+        {
+            if (cursors.left.isDown)
+            {
+                player.setVelocityX(-125);
+                Run = "left";
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunLeft', true);
+                }
+                else
+                {
+                    player.anims.play('Jump', true);
+                }
+                
+            }
+            else if (cursors.right.isDown)
+            {
+                Run = "right";
+                player.setVelocityX(125);
+                if(player.body.touching.down)
+                {
+                    player.anims.play('RunRight', true);
+                }
+                else
+                {
+                    player.anims.play('JumpRight', true);
+                }
+            }
+            else
+            {
+                player.setVelocityX(0);
+                player.setAccelerationX(0);
                 if(Run == "left")
                 {
                     player.anims.play('IdleLeft',true);
@@ -482,119 +596,27 @@ function update ()
                     player.anims.play('IdleRight',true);
                 }
             }
-            else
-            {
-                player.anims.play('JumpLeft', true);
-            }
         }
-    }
+        
+        Saut();
 
-////////////////////////////////////////// ICE //////////////////////////////////////////
-    else if (ICE == true)
+        //---------------// Dash Down //---------------//
+        if (!player.body.touching.down && cursors.down.isDown)
+        {
+            player.setVelocityY(400);
+        }
+
+        Dash();
+    }
+    else if (paddleConnected == true)
     {
-        if (cursors.left.isDown)
+        console.log("manette");
+        if(paddle.A)
         {
-            player.setAccelerationX(-200);
-            Run = "left";
-
-            if(player.body.touching.down)
-            {
-                player.anims.play('RunLeft', true);
-            }
-            else
-            {
-                player.anims.play('JumpLeft', true);
-            }
-        }
-        else if (cursors.right.isDown)
-        {
-            player.setAccelerationX(200);
-            Run = "right";
-            if(player.body.touching.down)
-            {
-                player.anims.play('RunRight', true);
-            }
-            else
-            {
-                player.anims.play('JumpRight', true);
-            }
-        }
-        else
-        {
-            player.setAccelerationX(-0);
-            if(player.body.touching.down)
-            {
-                if(Run == "left")
-                {
-                    player.anims.play('IdleLeft',true);
-                }
-                else if (Run == "right")
-                {
-                    player.anims.play('IdleRight',true);
-                }
-            }
-            else
-            {
-                player.anims.play('JumpLeft', true);
-            }
-            
+            console.log("A");
+            player.setVelocityX(500);
         }
     }
-    ////////////////////////snow/////////////////////////
-    if(SNOW == true)
-    {
-        if (cursors.left.isDown)
-        {
-            player.setVelocityX(-125);
-            Run = "left";
-            if(player.body.touching.down)
-            {
-                player.anims.play('RunLeft', true);
-            }
-            else
-            {
-                player.anims.play('Jump', true);
-            }
-            
-        }
-        else if (cursors.right.isDown)
-        {
-            Run = "right";
-            player.setVelocityX(125);
-            if(player.body.touching.down)
-            {
-                player.anims.play('RunRight', true);
-            }
-            else
-            {
-                player.anims.play('JumpRight', true);
-            }
-        }
-        else
-        {
-            player.setVelocityX(0);
-            player.setAccelerationX(0);
-            if(Run == "left")
-            {
-                player.anims.play('IdleLeft',true);
-            }
-            else if (Run == "right")
-            {
-                player.anims.play('IdleRight',true);
-            }
-        }
-    }
-    
-    Saut();
-
-    //---------------// Dash Down //---------------//
-    if (!player.body.touching.down && cursors.down.isDown)
-    {
-        player.setVelocityY(400);
-    }
-
-    Dash();
-    
 
 
 

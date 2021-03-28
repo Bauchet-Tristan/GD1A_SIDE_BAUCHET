@@ -59,13 +59,13 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    this.load.image('wall', 'assets/platform_verticale.png');
-    this.load.image('sky', 'assets/sky.png');
-    this.load.image('ground', 'assets/platform.png');
-    this.load.image('groundICE', 'assets/platformICE.png');
-    this.load.image('star', 'assets/star.png');
-    this.load.image('bomb', 'assets/bomb.png');
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.image('wall', 'assets/roche1.png');
+    this.load.image('sky', 'assets/fond-1.png');
+    this.load.image('ground', 'assets/roche2.png');
+    this.load.image('groundICE', 'assets/snow1.png');
+    this.load.image('star', 'assets/bonus.png');
+    this.load.image('bomb', 'assets/bonus.png');
+    this.load.spritesheet('dude', 'assets/idleAnimation.png', { frameWidth: 32, frameHeight: 48 });
 }
 
 function create ()
@@ -79,7 +79,7 @@ function create ()
 
     //  Here we create the ground.
     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // LE SOL
+    platforms.create(400, 568, 'ground').setScale(1.5).refreshBody(); // LE SOL
 
     //  Now let's create some ledges
     platforms.create(600, 400, 'ground'); // Plateform 1
